@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# encoding: utf-8
 # Copyright 2018 Fei Cheng
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +53,7 @@ def TransformGraph(input_graph_def, inputs, outputs, transforms):
 
 
 def load_graph(frozen_graph_path):
-    # We load the protobuf file from the disk and parse it to retrieve the
+    # load the protobuf file from the disk and parse it to retrieve the
     # unserialized graph_def
     with tf.gfile.GFile(frozen_graph_path, "rb") as f:
         graph_def = tf.GraphDef()
@@ -74,11 +76,11 @@ def main(args):
 
 
 if __name__ == '__main__':
-  parser = argparse.ArgumentParser()
-  parser.add_argument('frozen_path', default=None, help='path to the saved frozen graph')
-  parser.add_argument('optimized_path', default=None, help='path to output optimized graph')
-  parser.add_argument('input_nodes', nargs='+', help='input nodes of the graph')
-  parser.add_argument('output_nodes', nargs='+', help='output nodes of the graph')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('frozen_path', default=None, help='path to the saved frozen graph')
+    parser.add_argument('optimized_path', default=None, help='path to output optimized graph')
+    parser.add_argument('input_nodes', nargs='+', help='input nodes names of the graph')
+    parser.add_argument('output_nodes', nargs='+', help='output nodes names of the graph')
 
-  args = parser.parse_args()
-  main(args)
+    args = parser.parse_args()
+    main(args)
