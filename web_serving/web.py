@@ -20,9 +20,9 @@ from inference import Hdrnet
 import base64
 
 # set up different model def graph
-hdrnet_face = Hdrnet('optimized_graph.pb', 'face')
-hdrnet_edge = Hdrnet('optimized_edge.pb', 'edge')
-hdrnet_hdr = Hdrnet('optimized_hdr.pb', 'hdr')
+hdrnet_face = Hdrnet('optimized_graph/optimized_face.pb', 'face')
+hdrnet_edge = Hdrnet('optimized_graph/optimized_edge.pb', 'edge')
+hdrnet_hdr = Hdrnet('optimized_graph/optimized_hdr.pb', 'hdr')
 
 
 @route('/')
