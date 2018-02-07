@@ -38,6 +38,9 @@ Now this web app 'photoAI' are serving 3 different pretrained models: face brigh
 
 ## Deloy Hdrnet model on android by Tensorflow mobile
 
+In order to deploy this model on android, I have to implement a custom tensorflow op (CUDA version) by opencl so that the op can run on mobile.
+Only partially working now, to be updated.
+
 ## Known issues and limitations
 
 * Tensorflow mobile doesn't support custom op, especially for ops implemented in CUDA. The hdrnet model used a custom op - BilateralSliceApply op - is GPU only.
