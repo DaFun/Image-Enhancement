@@ -23,13 +23,17 @@ import skimage.transform
 import base64
 import cv2
 from PIL import Image
+import re
+import cStringIO
 
 class Hdrnet(object):
-    def __init__(self, checkpoint):
-        self.mask_id = 5800
+    def __init__(self, checkpoint, dir):
+        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=1)
         self.checkpoint = checkpoint
-        self.sess = tf.Session()
         self.graph = self.load_graph(checkpoint)
+        self.sess = tf.Session(graph=self.graph, config=tf.ConfigProto(gpu_options=gpu_options))
+        self.count = 0
+        self.dir = dir
 
     def load_graph(self, graph):
         # load the protobuf file from the disk and parse it to retrieve the
@@ -43,37 +47,52 @@ class Hdrnet(object):
             tf.import_graph_def(graph_def)
         return graph
 
-    def preprocess(self, file):
-        data = base64.b64decode(file)
-        return data
+    def preprocess(self, url_data):
+        img_dict = re.match("data:(?P<type>.*?);(?P<encoding>.*?),(?P<data>.*)", url_data).groupdict()
+        #file = img_dict['data'].decode(img_dict['encoding'], 'strict')
+        data = base64.b64decode(img_dict['data'])
+        with open('/tmp/' + self.dir + '/'+str(self.count)+'.jpeg', 'wb') as f:
+            f.write(data)
+        np_data = cv2.imread('/tmp/' + self.dir + '/'+str(self.count)+'.jpeg', -1)
+        print(np_data.shape)
+        self.count += 1
+        return np_data
 
 
-    def infer(self, file):
+    def infer(self, data):
         """ Perform inferencing.  In other words, generate a paraphrase
         for the source sentence.
 
         Args:
-            file : input buffer from memory
+            data : base64 encoded image string
 
         Returns:
             new_image: numpy array
         """
 
-        # img = self.preprocess(file)
-        im_input = cv2.imdecode(file, -1)  # -1 means read as is, no conversions.
+        im_input = self.preprocess(data)
+        # im_input = cv2.imdecode(img, -1)  # -1 means read as is, no conversions.
         if im_input.shape[2] == 4:
             im_input = im_input[:, :, :3]
 
         im_input = np.flip(im_input, 2)  # OpenCV reads BGR, convert back to RGB.
-        im_input = skimage.img_as_float(im_input)
+
+        if im_input.dtype == np.uint16 and self.dir == 'hdr':
+            # im_input = im_input / 32767.0
+            # im_input = im_input / 32767.0 /2
+            # im_input = im_input / (1.0*2**16)
+            im_input = skimage.img_as_float(im_input)
+        else:
+            im_input = skimage.img_as_float(im_input)
 
         lowres_input = skimage.transform.resize(im_input, [256, 256], order=0)
         im_input = im_input[np.newaxis, :, :, :]
         lowres_input = lowres_input[np.newaxis, :, :, :]
 
-        fullres = self.graph.get_tensor_by_name('fullres_input:0')
-        lowres = self.graph.get_tensor_by_name('lowres_input:0')
-        out = self.graph.get_tensor_by_name('output_img:0')
+
+        fullres = self.graph.get_tensor_by_name('import/fullres_input:0')
+        lowres = self.graph.get_tensor_by_name('import/lowres_input:0')
+        out = self.graph.get_tensor_by_name('import/output_img:0')
 
         feed_dict = {
             fullres: im_input,
@@ -81,7 +100,10 @@ class Hdrnet(object):
         }
 
         y_out = self.sess.run(out, feed_dict=feed_dict)
-        return y_out
+        img = Image.fromarray(y_out, 'RGB')
+        buffer = cStringIO.StringIO()
+        img.save(buffer, format='JPEG')
+        return buffer.getvalue()
 
 
 def main():
