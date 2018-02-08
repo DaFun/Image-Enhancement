@@ -43,6 +43,27 @@ $('.image-upload-wrap').bind('dragover', function () {
 
 
 function serverRequest(mode) {
+//    var http = new XMLHttpRequest();
+//    var url = server;
+//    var params = {
+//        mode: mode,
+//        data: dataURL
+//    };
+//    http.open("POST", url, true);
+//
+//    //Send the proper header information along with the request
+//    //http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+//
+//    http.onreadystatechange = function(data) {//Call a function when the state changes.
+//        if(http.readyState == 4 && http.status == 200) {
+//            $("<img>", {
+//             "src": "data:image/jpeg;base64," + data['data'],
+//             "class": "file-upload-image"
+//             }).appendTo("#res");
+//        }
+//    }
+//    http.send(params);
+
   $.ajax({
     type: 'POST',
     url: server,

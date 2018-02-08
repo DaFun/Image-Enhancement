@@ -28,10 +28,10 @@ import cStringIO
 
 class Hdrnet(object):
     def __init__(self, checkpoint, dir):
-        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=1)
+        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.9)
         self.checkpoint = checkpoint
         self.graph = self.load_graph(checkpoint)
-        self.sess = tf.Session(graph=self.graph, config=tf.ConfigProto(gpu_options=gpu_options))
+        self.sess = tf.Session(graph=self.graph)
         self.count = 0
         self.dir = dir
 
@@ -64,7 +64,7 @@ class Hdrnet(object):
         for the source sentence.
 
         Args:
-            data : base64 encoded image string
+            file : input buffer from memory
 
         Returns:
             new_image: numpy array
@@ -100,6 +100,7 @@ class Hdrnet(object):
         }
 
         y_out = self.sess.run(out, feed_dict=feed_dict)
+
         img = Image.fromarray(y_out, 'RGB')
         buffer = cStringIO.StringIO()
         img.save(buffer, format='JPEG')

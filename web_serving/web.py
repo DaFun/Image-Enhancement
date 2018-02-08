@@ -14,22 +14,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from bottle import route, run, template, request, response, BaseRequest
+from bottle import Bottle, route, run, template, request, response, BaseRequest
 BaseRequest.MEMFILE_MAX = 256000000
 from inference import Hdrnet
 import base64
+import os
 
-# set up different model def graph
-hdrnet_face = Hdrnet('optimized_graph/optimized_face.pb', 'face')
-hdrnet_edge = Hdrnet('optimized_graph/optimized_edge.pb', 'edge')
-hdrnet_hdr = Hdrnet('optimized_graph/optimized_hdr.pb', 'hdr')
+if not os.path.isdir('/tmp/face'):
+	os.mkdir('/tmp/face')
+	os.mkdir('/tmp/hdr')
+	os.mkdir('/tmp/edge')
+
+# set the optimized graph path
+hdrnet_face = Hdrnet('optimized_graph.pb', 'face')
+hdrnet_edge = Hdrnet('optimized_edge.pb', 'edge')
+hdrnet_hdr = Hdrnet('optimized_hdr.pb', 'hdr')
 
 
 @route('/')
 def index():
     return template('index')
 
-@route('/infer', method='POST')
+@route('/infer', method=['POST'])
 def infer():
     file = request.forms.get('data')
     mode = request.forms.get('mode')
@@ -41,6 +47,7 @@ def infer():
         data = hdrnet_hdr.infer(file)
 
     response.content_type = 'text/json'
+    response.set_header('Access-Control-Allow-Origin', '*')
     return {'data': base64.b64encode(data)}
 
 # set inet address
