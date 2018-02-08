@@ -41,7 +41,9 @@ Now this web app 'photoAI' are serving 3 different pretrained models: face brigh
 In order to deploy this model on android, I have to implement a custom tensorflow op (CUDA version) by opencl so that the op can run on mobile.
 Need to clean some code, to be updated.
 
-![alt text](./IMG_1410.jpg =250x "android img")
+<p align="center">
+  <img src="./IMG_1410.jpg" width="350"/>
+</p>
 
 ## Known issues and limitations
 
