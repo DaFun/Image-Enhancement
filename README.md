@@ -31,6 +31,10 @@ To test the prepares model for use on web app or mobile:
 ## Serving the Hdrnet model on cloud
 ![alt text](https://github.com/DaFun/Image-Enhancement/blob/master/web_app_page.png "front page")
 
+<p align="center">
+  <img src="./example.png"/>
+</p>
+
 ### [photoAI](http://photo-ai.surge.sh/)
 
 Now this web app 'photoAI' are serving 3 different pretrained models: face brightening, edge enhancing, hdr+
