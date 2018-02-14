@@ -47,6 +47,20 @@ Need to clean some code, to be updated.
   <img src="./IMG_1410.jpg" width="350"/>
 </p>
 
+## Inference performance comparison with and without XLA
+
+Some tests with XLA fused operation optimization. Images below shows tests with 1 batch (20) 1500*1000 pictures.
+
+Inference without XLA JIT
+<p align="center">
+    <img src="./no_xla.png"/>
+</p>
+
+Inference with XLA JIT
+<p align="center">
+    <img src="./xla.png"/>
+</p>
+
 ## Known issues and limitations
 
 * Tensorflow mobile doesn't support custom op, especially for ops implemented in CUDA. The hdrnet model used a custom op - BilateralSliceApply op - is GPU only.
