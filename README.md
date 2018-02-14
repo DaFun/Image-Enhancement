@@ -49,7 +49,7 @@ Need to clean some code, to be updated.
 
 ## Inference performance comparison with and without XLA
 
-Some tests with XLA fused operation optimization. Images below shows tests with 1 batch (20) 1500*1000 pictures.
+Some tests with XLA fused operation optimization. Images below shows tests with 1 batch (20) 1500*1000 pictures. Didn't see any improvements by using XLA. I think there are mainly two reasons: bilateralSliceApply is a very heavy computation custom op, and cannot be fused by XLA; XLA is still at early stage.
 
 Inference without XLA JIT
 <p align="center">
